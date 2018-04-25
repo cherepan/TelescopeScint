@@ -83,7 +83,7 @@ void plot0(){
   gr1->SetFillColor(1);
   gr1->SetMarkerColor(2);
   gr1->SetMarkerStyle(22);
-
+  gr1->SetName("gr1");
   gr1->Draw("AP");
 
   int size2 = vthreshold2.size();
@@ -100,6 +100,7 @@ void plot0(){
   gr2->SetFillColor(1);
   gr2->SetMarkerColor(3);
   gr2->SetMarkerStyle(21);
+  gr2->SetName("gr2");
   gr2->Draw("P SAME");
 
      auto legend = new TLegend(0.5,0.7,0.9,0.9);

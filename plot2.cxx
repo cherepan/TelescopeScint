@@ -83,7 +83,7 @@ void plot2(){
   gr1->SetFillColor(1);
   gr1->SetMarkerColor(2);
   gr1->SetMarkerStyle(22);
-
+  gr1->SetName("gr1");
   gr1->Draw("AP");
 
   int size2 = vthreshold2.size();
@@ -100,6 +100,7 @@ void plot2(){
   gr2->SetFillColor(1);
   gr2->SetMarkerColor(3);
   gr2->SetMarkerStyle(21);
+  gr2->SetName("gr2");
   gr2->Draw("P SAME");
 
 
