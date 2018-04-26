@@ -16,69 +16,44 @@
 
 void plot1(){
   double TotalTimeCount = 15.;
-  ifstream input_file1;
-  ifstream input_file2;
+  ifstream input_file;
  
-  string file_1 = "Counts_SCINT1_NoSource_15s.dat";  string file_2 = "Counts_SCINT1_SrSource_15s.dat";
-  input_file1.open(file_1, std::ios::in);
-  input_file2.open(file_2, std::ios::in);
+  string file = "SCINT1_15s.dat"; 
+  input_file.open(file, std::ios::in);
   
 
-  if(!input_file1){
-    std::cout<<"Error!! Can not open the input file  " << file_1 <<std::endl;
+  if(!input_file){
+    std::cout<<"Error!! Can not open the input file  " << file <<std::endl;
   }
-   if(!input_file2){
-     std::cout<<"Error!! Can not open the input file  " <<  file_2<< std::endl;
-  }
-  
  
- 
-  std::string s1;
-  int a1 = 0;
-  // TVectorF vthreshold;  TVectorF vcount;
-   std::vector<float> vthreshold1;
-   std::vector<float> vcount1;
-  while (getline(input_file1, s1)) {
-    a1++;
-    std::stringstream line(s1);
+  std::string s;
+  int a = 0;
+  std::vector<float> vthreshold;
+  std::vector<float> vcountSr;
+  std::vector<float> vcount0;
+  while (getline(input_file, s)) {
+    a++;
+    std::stringstream line(s);
     float threshold;
     float count;
-    line >> threshold >> count;
-    //   std::cout<<" count  "<<count <<std::endl;
-    vthreshold1.push_back(-threshold);
-    vcount1.push_back(count);
+    float count0;
+    line >> threshold >> count >> count0;
+    vthreshold.push_back(-threshold);
+    vcountSr.push_back(count);
+    vcount0.push_back(count0);
   }
-  std::string s2;
-  int a2 = 0;
-  // TVectorF vthreshold;  TVectorF vcount;
-   std::vector<float> vthreshold2;
-   std::vector<float> vcount2;
-  while (getline(input_file2, s2)) {
-    a2++;
-    std::stringstream line(s2);
-    float threshold;
-    float count;
-    line >> threshold >> count;
-  
-    vthreshold2.push_back(-threshold);
-   
-    vcount2.push_back(count);
-  }
- 
-  int size1 = vthreshold1.size();
-
-  float pthreshold1[size1];
-  float pcount1[size1];
-  float epcount1[size1];
-
-  for(int i=0; i<size1; i++){pthreshold1[i]=vthreshold1.at(i);pcount1[i]=vcount1.at(i);epcount1[i] = sqrt(pcount1[i]);}
-  TGraphErrors *gr1 = new TGraphErrors(size1,pthreshold1,pcount1,0,epcount1);
+  float pthreshold[vthreshold.size()];
+  float pcount[vthreshold.size()];
+  float pcount0[vthreshold.size()];
+  float epcount[vthreshold.size()];
+  float epcount0[vthreshold.size()];
+  float ratio[vthreshold.size()];
+  for(int i=0; i<vthreshold.size(); i++){pthreshold[i]=100*vthreshold.at(i);pcount[i]=vcountSr.at(i);
+    epcount[i] = sqrt(pcount[i]);pcount0[i]=vcount0.at(i);epcount0[i]=sqrt(pcount0[i]); ratio[i]=pcount0[i]/pcount[i];}
+  TGraphErrors *gr1 = new TGraphErrors(vthreshold.size(),pthreshold,pcount,0,epcount);
   gr1->GetXaxis()->SetTitle("Threshold, [mV])");
   gr1->GetYaxis()->SetTitle("counts per sec");
   gr1->SetTitle("Threshold scan, SCINT1, PMT V = 908 mV ");
-  // gr1->GetXaxis()->SetRangeUser(-0.2,1.4);
-  // gr1->GetYaxis()->SetRangeUser(0,20000);
-
   
   gr1->SetFillColor(1);
   gr1->SetMarkerColor(2);
@@ -86,35 +61,25 @@ void plot1(){
   gr1->SetName("gr1");
   gr1->Draw("AP");
 
-  int size2 = vthreshold2.size();
-  
-  float pthreshold2[size2];
-  float pcount2[size2];
-  float epcount2[size2];
-  float ratio[size2];
-  for(int i=0; i<size2; i++){pthreshold2[i]=vthreshold2.at(i);pcount2[i]=vcount2.at(i);epcount2[i] = sqrt(pcount2[i]);ratio[i] = pcount1[i]/pcount2[i];}
-  TGraphErrors *gr2 = new TGraphErrors(size2,pthreshold2,pcount2,0,epcount2);
-  //  gr2->GetYaxis()->SetRangeUser(0,1000);
-  
-  
+  TGraphErrors *gr2 = new TGraphErrors(vthreshold.size(),pthreshold,pcount0,0,epcount);
   gr2->SetFillColor(1);
   gr2->SetMarkerColor(3);
   gr2->SetMarkerStyle(21);
   gr2->SetName("gr2");
   gr2->Draw("P SAME");
 
-    auto legend = new TLegend(0.5,0.7,0.9,0.9);
+  auto legend = new TLegend(0.5,0.7,0.9,0.9);
   legend->AddEntry("gr2","Sr source","lep");
   legend->AddEntry("gr1","No Source","lep");
   legend->Draw();
 
 
   TCanvas *c = new TCanvas("c","c",100,100,400,400);
-  TGraphErrors *gr3 = new TGraphErrors(size2,pthreshold2,ratio,0,0);
+  TGraphErrors *gr3 = new TGraphErrors(vthreshold.size(),pthreshold,ratio,0,0);
   gr3->GetXaxis()->SetTitle("Threshold, [mV])");
   gr3->GetYaxis()->SetTitle("Noise/Signale rate");
   gr3->SetTitle("Threshold scan, SCINT1, PMT V = 908 mV ");
-  gr3->GetXaxis()->SetRangeUser(0,20);
+  gr3->GetXaxis()->SetRangeUser(0,2000);
   gr3->GetYaxis()->SetRangeUser(0,1);
   gr3->Draw("ACP");
 
