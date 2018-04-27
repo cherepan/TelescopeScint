@@ -69,8 +69,8 @@ void plot2(){
   gr2->Draw("P SAME");
 
   auto legend = new TLegend(0.5,0.7,0.9,0.9);
-  legend->AddEntry("gr2","Sr source","lep");
-  legend->AddEntry("gr1","No Source","lep");
+  legend->AddEntry("gr1","Sr source","lep");
+  legend->AddEntry("gr2","No Source","lep");
   legend->Draw();
 
 
